@@ -85,6 +85,7 @@ export default defineConfig({
 						label: 'Body',
 						name: 'SButton',
 						isBody: true,
+						toolbarOverride: ['heading', 'bold', 'italic', 'link', 'image', 'code', 'codeBlock'],
 						templates: [
 							// Custom Components
 							{
