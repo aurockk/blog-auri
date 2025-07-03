@@ -83,9 +83,11 @@ export default defineConfig({
 					{
 						type: 'rich-text',
 						label: 'Body',
-						name: 'SButton',
+						name: 'body',
 						isBody: true,
-						toolbarOverride: ['heading', 'bold', 'italic', 'link', 'image', 'code', 'codeBlock'],
+						ui: {
+							toolbar: ['heading', 'bold', 'italic', 'link', 'image', 'code', 'codeBlock']
+						},
 						templates: [
 							// Custom Components
 							{
