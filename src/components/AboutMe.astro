@@ -1,5 +1,9 @@
 ---
-
+import { SOCIALNETWORKS } from '@/data/links'
+import HeaderLink from './HeaderLink.astro'
+import { siteConfig } from '@/site-config'
+import '../styles/global.css'
+import { ViewTransitions } from 'astro:transitions'
 ---
 
 <section class='mx-auto max-w-2xl prose py-8 px-4'>
@@ -15,8 +19,7 @@
 			href='https://mediapila.org.ar/'
 			target='_blank'
 			rel='noopener'>MediaPila</a
-		>, una ONG para mujeres: ahí perdí el miedo y me enamoré del <em>JavaScript</em>. Mi primer
-		orgullo fue ver mis propias páginas y aplicaciones en funcionamiento.
+		>, una ONG para mujeres: ahí perdí el miedo y me enamoré del <em>JavaScript</em>.
 	</p>
 	<p>
 		He trabajado en proyectos colaborativos usando Node.js, Express, MongoDB y más. Me caracterizo
@@ -28,6 +31,29 @@
 		Además, fuera del código me encanta pasar el rato con mis mascotas, aprender a coser y compartir
 		recetas saludables.
 		<br />
-		<span class='italic'>¡Bienvenida a este espacio donde combino tecnología, vida y pasión!</span>
+		<span class='italic'>¡Bienvenide a este espacio donde combino tecnología, vida y pasión!</span>
 	</p>
+	<div class='flex items-center gap-4'>
+		<div class='flex items-center h-12 border-l border-black dark:border-white pl-4 gap-3'>
+			{
+				SOCIALNETWORKS.map((network) => (
+					<HeaderLink
+						class='transition-transform hover:scale-110'
+						href={network.url}
+						target='_blank'
+						aria-label={network.name}
+					>
+						<span class='inline-block w-6 h-6'>
+							<network.icon />
+						</span>
+					</HeaderLink>
+				))
+			}
+		</div>
+	</div>
 </section>
+<style>
+	html.dark p html.dark strong html.dark em html.dark {
+		color: white;
+	}
+</style>

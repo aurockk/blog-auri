@@ -2,31 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-	/* body {
-		transition: background-color 0.5s ease;
-	} */
+:root {
+	--waline-theme-color: #1abc9c;
+	--waline-active-color: #16a085;
+	--waline-bg-color: #fffefb;
+	--waline-border-color: #e0e0e0;
+	--waline-box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+	--waline-avatar-radius: 50%;
+  }
+  
+  .wl-comment {
+	padding: 1rem;
+	margin-bottom: 1rem;
+  }
+  
+  .wl-like {
+	font-size: 1.2rem;
+  }
 
+.wl-form-row .wl-column-website {
+	display: none;
+  }
+  
+  .wl-form-row .wl-column {
+	width: auto;
+	flex-grow: 1;
+  }
+	
+  
+@layer base {
 	.prose code {
 		@apply text-base;
 	}
 
-	/* prose styles here */
 	.prose h1,
 	h2,
 	h3,
 	h4,
 	h5,
 	h6 {
-		@apply text-zinc-800 dark:text-zinc-100   !important;
+		@apply text-zinc-800 dark:text-rosepine-text !important;
 	}
 
 	html.dark .shiki,
-	html.dark .shiki span
-	html.dark{
-	  color: var(--shiki-dark) !important;
-	  background-color: theme(colors.gray.900) !important;
+	html.dark .shiki span {
+		color: var(--shiki-dark) !important;
 	}
+
+	body {
+		@apply bg-white text-zinc-900 dark:bg-rosepine-base dark:text-rosepine-text transition-colors duration-500;
+	}
+
+	a {
+		@apply text-rosepine-pine dark:text-rosepine-foam underline;
+		text-decoration: none;
+	}
+}
+
+html.dark p,
+html.dark strong,
+html.dark em,
+html.dark a,
+html.dark span {
+	color: theme('colors.rosepine.text');
 }
 
 .glass {
@@ -39,3 +77,4 @@
 .shadow {
 	box-shadow: -5px 3px 8px 1px rgba(0, 0, 0, 0.12);
 }
+

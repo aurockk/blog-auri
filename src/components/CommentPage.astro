@@ -1,0 +1,14 @@
+---
+import Comment from './Comment.astro'
+---
+
+<Comment />
+<script type='module'>
+	import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js'
+
+	init({
+		el: '#waline',
+		serverURL: 'https://comment-section-ebbxm8kld-aurock98s-projects.vercel.app',
+		lang: 'es'
+	})
+</script>
