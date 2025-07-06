@@ -98,7 +98,7 @@ export default defineConfig({
 										type: 'rich-text',
 										label: 'SButton',
 										name: 'children',
-										isBody: true
+										isBody: false
 									}
 								]
 							}
