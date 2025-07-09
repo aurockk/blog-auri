@@ -6,10 +6,11 @@ import ProviderTheme from '@/components/ProviderTheme'
 import ProviderAnimations from '@/components/ProviderAnimations'
 import TwSizeIndicator from '@/components/TwSizeIndicator'
 import EditBlog from '@/components/editBlog'
+import CurrentReading from '@/components/CurrentReading'
 const { title, description, image, articleDate } = Astro.props
 ---
 
-<html lang='es' class='scroll-smooth'>
+<html lang='es' class='scroll-smooth relative'>
 	<head>
 		<BaseHead title={title} description={description} ogImage={image} articleDate={articleDate} />
 		<ProviderTheme />
@@ -23,6 +24,7 @@ const { title, description, image, articleDate } = Astro.props
 			<Header />
 			<slot />
 			<Footer />
+			<CurrentReading />
 		</main>
 		<TwSizeIndicator />
 		<EditBlog />
