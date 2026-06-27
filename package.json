@@ -34,6 +34,7 @@
 	},
 	"dependencies": {
 		"@astrojs/rss": "4.0.1",
+		"@astrojs/vercel": "^11.0.0",
 		"@tinacms/cli": "^2.1.1",
 		"@tinacms/form-builder": "^0.43.3",
 		"astro": "4.0.8",
@@ -51,6 +52,7 @@
 		"@pagefind/default-ui": "^1.0.4",
 		"@tailwindcss/typography": "0.5.10",
 		"@typescript-eslint/parser": "^6.16.0",
+		"@vercel/node": "^5.8.21",
 		"clsx": "2.0.0",
 		"eslint": "^8.56.0",
 		"eslint-plugin-astro": "^0.31.0",

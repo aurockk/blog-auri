@@ -32,19 +32,21 @@ const getHostname = (url: string) => {
 	}
 }
 
+const REACTIONS = ['❤️'] as const
+
 const rendered = await Promise.all(
 	thoughts.map(async (thought) => {
 		const { Content } = await thought.render()
 		const ytId = thought.data.video ? getYouTubeId(thought.data.video) : null
 		const linkHost = thought.data.link?.url ? getHostname(thought.data.link.url) : null
-		return { data: thought.data, Content, ytId, linkHost }
+		return { id: thought.slug, data: thought.data, Content, ytId, linkHost }
 	})
 )
 ---
 
 <ul class='feed-list'>
 	{
-		rendered.map(({ data, Content, ytId, linkHost }) => (
+		rendered.map(({ id, data, Content, ytId, linkHost }) => (
 			<li class='feed-entry'>
 				<span class='feed-timestamp'>[{formatTimestamp(data.pubDate)}]</span>
 				<div class='feed-content'>
@@ -88,6 +90,14 @@ const rendered = await Promise.all(
 							{linkHost && <span class='feed-link-host'>{linkHost}</span>}
 						</a>
 					)}
+				</div>
+				<div class='feed-reactions' data-id={id}>
+					{REACTIONS.map((emoji) => (
+						<button class='rxn-btn' data-emoji={emoji} aria-label={`reaccionar con ${emoji}`}>
+							{emoji}
+							<span class='rxn-count' />
+						</button>
+					))}
 				</div>
 			</li>
 		))
@@ -206,4 +216,99 @@ const rendered = await Promise.all(
 		font-size: 0.75rem;
 		color: var(--dim);
 	}
+
+	.feed-reactions {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		margin-top: 0.5rem;
+	}
+
+	.rxn-btn {
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		font-size: 14px;
+		line-height: 1;
+		opacity: 0.35;
+		transition:
+			opacity 0.15s,
+			transform 0.1s;
+	}
+
+	.rxn-btn:hover {
+		opacity: 0.7;
+	}
+
+	.rxn-btn.rxn-active {
+		opacity: 1;
+		transform: scale(1.1);
+	}
+
+	.rxn-count {
+		font-family: 'TerminessNF', ui-monospace, monospace;
+		font-size: 13px;
+		color: var(--ink);
+	}
 </style>
+
+<script>
+	const bars = document.querySelectorAll<HTMLElement>('.feed-reactions')
+	const ids = [...bars].map((b) => b.dataset.id).filter(Boolean) as string[]
+
+	// restore active state from localStorage
+	bars.forEach((bar) => {
+		if (localStorage.getItem(`rxn:${bar.dataset.id!}`) === '1') {
+			bar.querySelector('.rxn-btn')?.classList.add('rxn-active')
+		}
+	})
+
+	// fetch global counts
+	if (ids.length) {
+		fetch(`/api/reactions?ids=${ids.join(',')}`)
+			.then((r) => r.json())
+			.then((data: Record<string, number>) => {
+				bars.forEach((bar) => {
+					const n = data[bar.dataset.id!] ?? 0
+					const el = bar.querySelector('.rxn-count')!
+					el.textContent = n > 0 ? ` ${n}` : ''
+				})
+			})
+			.catch(() => {})
+	}
+
+	// click handler
+	bars.forEach((bar) => {
+		const id = bar.dataset.id!
+		const btn = bar.querySelector<HTMLButtonElement>('.rxn-btn')!
+		const countEl = btn.querySelector('.rxn-count')!
+
+		btn.addEventListener('click', () => {
+			const liked = localStorage.getItem(`rxn:${id}`) === '1'
+			const delta = liked ? -1 : 1
+
+			// optimistic update
+			const current = parseInt(countEl.textContent?.trim() || '0') || 0
+			const next = Math.max(0, current + delta)
+			countEl.textContent = next > 0 ? ` ${next}` : ''
+			btn.classList.toggle('rxn-active')
+			localStorage.setItem(`rxn:${id}`, liked ? '0' : '1')
+
+			// sync with db
+			fetch('/api/reactions', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id, delta })
+			})
+				.then((r) => r.json())
+				.then(({ count }) => {
+					countEl.textContent = count > 0 ? ` ${count}` : ''
+				})
+				.catch(() => {})
+		})
+	})
+</script>
