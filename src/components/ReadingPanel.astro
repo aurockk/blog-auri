@@ -1,0 +1,166 @@
+---
+import TerminalPrompt from './TerminalPrompt.astro'
+import lectura from '../data/recentlybook.json'
+
+const { isbn, progress, note, finished } = lectura
+
+let title = ''
+let author = ''
+
+const bibkey = isbn.startsWith('OL') ? `OLID:${isbn}` : `ISBN:${isbn}`
+
+try {
+	const res = await fetch(
+		`https://openlibrary.org/api/books?bibkeys=${bibkey}&format=json&jscmd=data`
+	)
+	const data = await res.json()
+	const book = data[bibkey]
+	title = book?.title ?? ''
+	author = book?.authors?.[0]?.name ?? ''
+} catch {}
+---
+
+<div class='rp-body'>
+	<div class='rp-label'>// leyendo ahora</div>
+	<div class='rp-current'>
+		<div class='rp-bar'></div>
+		<div class='rp-current-info'>
+			{
+				title ? (
+					<>
+						<div class='rp-title'>{title}</div>
+						<div class='rp-meta'>
+							<span class='rp-dim'>por</span>
+							<span class='rp-amber'> {author}</span>
+							<span class='rp-dim'> · {progress}</span>
+						</div>
+					</>
+				) : (
+					<div class='rp-dim'>ISBN: {isbn}</div>
+				)
+			}
+			<p class='rp-note'>"{note}"</p>
+		</div>
+	</div>
+
+	<div class='rp-label rp-label--gap'>// leídos &mdash; {finished.length} libros</div>
+	<div class='rp-finished'>
+		{
+			finished.map((b) => (
+				<div class='rp-book-row'>
+					<span class='rp-dim rp-date'>{b.date}</span>
+					<span class='rp-book-title'>
+						<span class='rp-accent'>&gt;</span> {b.title}
+						<span class='rp-dim'> — {b.author}</span>
+					</span>
+					<span class='rp-stars'>{b.stars}</span>
+				</div>
+			))
+		}
+	</div>
+
+	<TerminalPrompt />
+</div>
+
+<style>
+	.rp-body {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.rp-label {
+		color: var(--accent);
+		font-size: 13px;
+		letter-spacing: 1px;
+		margin-bottom: 12px;
+	}
+
+	.rp-label--gap {
+		margin-top: 22px;
+		margin-bottom: 6px;
+	}
+
+	.rp-current {
+		display: flex;
+		gap: 14px;
+		align-items: stretch;
+		padding-bottom: 22px;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.rp-bar {
+		width: 3px;
+		background: var(--accent);
+		flex-shrink: 0;
+		align-self: stretch;
+		min-height: 40px;
+	}
+
+	.rp-current-info {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.rp-title {
+		font-size: 20px;
+		font-weight: 700;
+		color: var(--bright, var(--ink));
+		line-height: 1.2;
+	}
+
+	.rp-meta {
+		font-size: 13px;
+	}
+
+	.rp-note {
+		font-style: italic;
+		color: var(--ink);
+		font-size: 13.5px;
+		max-width: 540px;
+		margin: 12px 0 0;
+		line-height: 1.7;
+		opacity: 0.92;
+	}
+
+	.rp-accent {
+		color: var(--accent);
+	}
+
+	.rp-dim {
+		color: var(--dim);
+	}
+
+	.rp-amber {
+		color: var(--amber);
+	}
+
+	.rp-finished {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.rp-book-row {
+		display: grid;
+		grid-template-columns: 64px 1fr auto;
+		gap: 14px;
+		align-items: baseline;
+		padding: 11px 0;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.rp-date {
+		font-size: 12.5px;
+	}
+
+	.rp-book-title {
+		font-size: 13.5px;
+		color: var(--ink);
+	}
+
+	.rp-stars {
+		color: var(--amber);
+		font-size: 12px;
+		letter-spacing: 1px;
+	}
+</style>

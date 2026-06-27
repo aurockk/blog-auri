@@ -1,44 +1,703 @@
 ---
-import ListCategories from '@/components/ListCategories'
-import ListPosts from '@/components/ListPosts'
-import TitlePage from '@/components/TitlePage'
-import BaseLayout from '@/layouts/BaseLayout'
-import { getPosts } from '@/utils'
-import { siteConfig } from '@/site-config'
-import CurrentReading from '@/components/CurrentReading'
+import TerminalLayout from '@/layouts/TerminalLayout'
+import ThoughtsFeed from '@/components/ThoughtsFeed'
+import ReadingPanel from '@/components/ReadingPanel'
+import LainPlayer from '@/components/LainPlayer'
+import { getThoughts } from '@/utils'
+import { siteConfig } from '@/data/site.config'
 
-const MAX_POSTS = 5 // max number of posts to show on the home page
-const posts = await getPosts(MAX_POSTS)
+const thoughts = await getThoughts()
 ---
 
-<BaseLayout title='Home'>
-	<TitlePage title={siteConfig.title} />
-	<p>
-		¡Hola! Soy Auri 🦆. Bievenides a mi blog, donde escribo mis pensamientos ocurrentes. No tengo un
-		schedule de mis posteos pero mi cabeza está llena de ideas que merecen ser habladas. <br />
-		No tengan miedo si ven una palabra mal escrita, mi dislexia es parte de mi esencia.
-	</p>
-	<ListCategories />
-	<div>
-		<h2 class='text-lg font-medium tracking-wide text-end'>Latest Posts</h2>
-		<ListPosts FirstBig={true} posts={posts} />
+<TerminalLayout title='AuriOS'>
+	<script slot='head' is:inline>
+		;(function () {
+			var theme = localStorage.getItem('terminalTheme') || 'lain'
+			document.documentElement.setAttribute('data-terminal-theme', theme)
+		})()
+	</script>
+	<link slot='head' rel='preconnect' href='https://fonts.googleapis.com' />
+	<link slot='head' rel='preconnect' href='https://fonts.gstatic.com' crossorigin />
+	<link
+		slot='head'
+		href='https://fonts.googleapis.com/css2?family=VT323&display=swap'
+		rel='stylesheet'
+	/>
+
+	<div id='terminal-page'>
+		<!-- decorative wires -->
+		<div class='wire wire-left'></div>
+		<div class='wire wire-right'></div>
+
+		<div class='crt-scanlines'></div>
+		<div class='crt-vignette'></div>
+		<div class='crt-noise'></div>
+		<div class='crt-scan'></div>
+		<div class='crt-glitch'></div>
+
+		<div class='page-inner'>
+			<!-- Copland OS chrome bar -->
+			<div class='copland-chrome'>
+				<div class='copland-left'>
+					<span class='copland-dots'>
+						<span class='copland-dot'></span>
+						<span class='copland-dot'></span>
+						<span class='copland-dot copland-dot--hot'></span>
+					</span>
+					<span>COPLAND&nbsp;OS&nbsp;ENTERPRISE</span>
+				</div>
+				<div class='copland-right'>
+					<span>navi // <span id='copland-palette-label'>lain</span></span>
+					<span class='copland-hot'>&#9679; CONNECTED</span>
+					<span>LAYER:01</span>
+				</div>
+			</div>
+
+			<header class='term-header'>
+				<div>
+					<a href='/' class='term-logo'>AuriOS</a>
+					<div class='term-subtitle'>
+						<span id='term-typed'></span><span class='term-cursor-block'>&#9608;</span>
+					</div>
+				</div>
+				<nav class='term-nav'>
+					<button id='term-theme-btn' class='term-icon-btn' title='tema'>[ theme ]</button>
+				</nav>
+			</header>
+
+			<LainPlayer src='/audio/[8-Bit] Bôa - Duvet.mp3' title='duvet' artist='bôa' />
+
+			<div class='term-tabwindow'>
+				<div class='term-tabbar'>
+					<div class='term-tab-wrap'>
+						<button class='term-tab term-tab--active' data-target='tab-home'
+							><span class='tilde'>~</span>/home</button
+						>
+					</div>
+					<div class='term-tab-wrap'>
+						<button class='term-tab' data-target='tab-leyendo'
+							><span class='tilde'>~</span>/leyendo</button
+						>
+					</div>
+				</div>
+				<div class='term-tabpanel' id='tab-home'>
+					<ThoughtsFeed thoughts={thoughts} />
+				</div>
+				<div class='term-tabpanel' id='tab-leyendo' hidden>
+					<ReadingPanel />
+				</div>
+			</div>
+
+			<footer class='term-footer'>
+				<span
+					><span class='term-hot'>#</span> © {new Date().getFullYear()}
+					{siteConfig.author}. Todos los derechos reservados. Los izquierdos también.</span
+				>
+				<span class='term-dim'>uptime: ∞ · pid: 0001</span>
+			</footer>
+		</div>
 	</div>
-</BaseLayout>
+</TerminalLayout>
 
 <script>
-	import { animate } from 'motion'
-	const showAnimations = localStorage.getItem('animations') === 'true'
+	const PHRASE = 'present day...  present time...  ahahaha'
 
-	if (showAnimations) {
-		animate(
-			'.title',
-			{ y: [80, 0], opacity: [0, 1] },
-			{
-				duration: 2.5,
-				opacity: { duration: 3 },
+	const palettes: Record<string, Record<string, string>> = {
+		lain: {
+			bg: '#060009',
+			panel: '#0d0012',
+			ink: '#c8a0e8',
+			dim: '#5a2878',
+			accent: '#bb55ee',
+			amber: '#e07acc',
+			border: '#2a0840',
+			glow: 'rgba(160,80,220,0.28)',
+			rain: '#aa44dd',
+			bright: '#ddb8f8',
+			hot: '#d640a0',
+			cool: '#8898cc'
+		},
+		green: {
+			bg: '#080a06',
+			panel: '#0c0f09',
+			ink: '#9bb585',
+			dim: '#52673f',
+			accent: '#bcd98f',
+			amber: '#c2a45e',
+			border: '#2a3320',
+			glow: 'rgba(150,190,120,0.25)',
+			rain: '#6f9a5e',
+			bright: '#d0f0a8',
+			hot: '#c87840',
+			cool: '#5a98a0'
+		},
+		amber: {
+			bg: '#0b0a07',
+			panel: '#14110b',
+			ink: '#b89b6c',
+			dim: '#796b54',
+			accent: '#9b7fc7',
+			amber: '#e7c886',
+			border: '#3a3024',
+			glow: 'rgba(200,150,80,0.22)',
+			rain: '#b8924e',
+			bright: '#e7c886',
+			hot: '#cc4f33',
+			cool: '#7d96a3'
+		},
+		cyan: {
+			bg: '#050a0a',
+			panel: '#0a1010',
+			ink: '#82aba8',
+			dim: '#3c5a58',
+			accent: '#a8d4cf',
+			amber: '#bca35e',
+			border: '#1e2e2c',
+			glow: 'rgba(120,180,175,0.22)',
+			rain: '#5a9398',
+			bright: '#c0e8e4',
+			hot: '#c06848',
+			cool: '#5898a8'
+		}
+	}
+	const order = ['lain', 'green', 'amber', 'cyan']
 
-				offset: [0, 0.55, 0.75]
-			}
-		)
+	const applyPalette = (name: string) => {
+		const palette = palettes[name] ?? palettes.lain
+		const root = document.documentElement
+		Object.entries(palette).forEach(([key, value]) => root.style.setProperty(`--${key}`, value))
+		root.setAttribute('data-terminal-theme', name)
+		localStorage.setItem('terminalTheme', name)
+		const label = document.getElementById('copland-palette-label')
+		if (label) label.textContent = name
+	}
+
+	applyPalette(localStorage.getItem('terminalTheme') || 'lain')
+
+	document.getElementById('term-theme-btn')?.addEventListener('click', () => {
+		const current = localStorage.getItem('terminalTheme') || 'lain'
+		const next = order[(order.indexOf(current) + 1) % order.length]
+		applyPalette(next)
+	})
+
+	document.querySelectorAll<HTMLButtonElement>('.term-tab').forEach((tab) => {
+		tab.addEventListener('click', () => {
+			document.querySelectorAll('.term-tab').forEach((t) => t.classList.remove('term-tab--active'))
+			tab.classList.add('term-tab--active')
+			document.querySelectorAll<HTMLElement>('.term-tabpanel').forEach((p) => {
+				p.hidden = true
+			})
+			const target = document.getElementById(tab.dataset.target!)
+			if (target) target.hidden = false
+		})
+	})
+
+	// typing animation
+	const typedEl = document.getElementById('term-typed')
+	if (typedEl) {
+		let i = 0
+		const interval = setInterval(() => {
+			i++
+			typedEl.textContent = PHRASE.slice(0, i)
+			if (i >= PHRASE.length) clearInterval(interval)
+		}, 85)
 	}
 </script>
+
+<style is:global>
+	:root,
+	:root[data-terminal-theme='lain'] {
+		--bg: #060009;
+		--panel: #0d0012;
+		--ink: #c8a0e8;
+		--dim: #5a2878;
+		--accent: #bb55ee;
+		--amber: #e07acc;
+		--border: #2a0840;
+		--glow: rgba(160, 80, 220, 0.28);
+		--rain: #aa44dd;
+		--bright: #ddb8f8;
+		--hot: #d640a0;
+		--cool: #8898cc;
+	}
+
+	:root[data-terminal-theme='amber'] {
+		--bg: #0b0a07;
+		--panel: #14110b;
+		--ink: #b89b6c;
+		--dim: #796b54;
+		--accent: #9b7fc7;
+		--amber: #e7c886;
+		--border: #3a3024;
+		--glow: rgba(200, 150, 80, 0.22);
+		--rain: #b8924e;
+		--bright: #e7c886;
+		--hot: #cc4f33;
+		--cool: #7d96a3;
+	}
+
+	:root[data-terminal-theme='green'] {
+		--bg: #080a06;
+		--panel: #0c0f09;
+		--ink: #9bb585;
+		--dim: #52673f;
+		--accent: #bcd98f;
+		--amber: #c2a45e;
+		--border: #2a3320;
+		--glow: rgba(150, 190, 120, 0.25);
+		--rain: #6f9a5e;
+		--bright: #d0f0a8;
+		--hot: #c87840;
+		--cool: #5a98a0;
+	}
+
+	:root[data-terminal-theme='cyan'] {
+		--bg: #050a0a;
+		--panel: #0a1010;
+		--ink: #82aba8;
+		--dim: #3c5a58;
+		--accent: #a8d4cf;
+		--amber: #bca35e;
+		--border: #1e2e2c;
+		--glow: rgba(120, 180, 175, 0.22);
+		--rain: #5a9398;
+		--bright: #c0e8e4;
+		--hot: #c06848;
+		--cool: #5898a8;
+	}
+</style>
+
+<style>
+	@font-face {
+		font-family: 'TerminessNF';
+		src: url('/fonts/TerminessNerdFont-Regular.ttf') format('truetype');
+		font-weight: 400;
+		font-style: normal;
+		font-display: swap;
+	}
+	@font-face {
+		font-family: 'TerminessNF';
+		src: url('/fonts/TerminessNerdFont-Bold.ttf') format('truetype');
+		font-weight: 700;
+		font-style: normal;
+		font-display: swap;
+	}
+	@font-face {
+		font-family: 'TerminessNF';
+		src: url('/fonts/TerminessNerdFont-Italic.ttf') format('truetype');
+		font-weight: 400;
+		font-style: italic;
+		font-display: swap;
+	}
+	@font-face {
+		font-family: 'TerminessNF';
+		src: url('/fonts/TerminessNerdFont-BoldItalic.ttf') format('truetype');
+		font-weight: 700;
+		font-style: italic;
+		font-display: swap;
+	}
+
+	@keyframes blink {
+		0%,
+		49% {
+			opacity: 1;
+		}
+		50%,
+		100% {
+			opacity: 0;
+		}
+	}
+
+	@keyframes flicker {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		92% {
+			opacity: 1;
+		}
+		93% {
+			opacity: 0.82;
+		}
+		94% {
+			opacity: 1;
+		}
+		97% {
+			opacity: 0.9;
+		}
+		98% {
+			opacity: 1;
+		}
+	}
+
+	@keyframes glitchS {
+		0% {
+			text-shadow:
+				1px 0 var(--hot),
+				-1px 0 var(--cool);
+		}
+		50% {
+			text-shadow:
+				-2px 0 var(--hot),
+				2px 0 var(--cool),
+				0 1px var(--accent);
+		}
+		100% {
+			text-shadow:
+				1px 0 var(--hot),
+				-1px 0 var(--cool);
+		}
+	}
+
+	@keyframes nz {
+		0% {
+			transform: translate(0, 0);
+		}
+		25% {
+			transform: translate(-38px, 18px);
+		}
+		50% {
+			transform: translate(26px, -28px);
+		}
+		75% {
+			transform: translate(-16px, 34px);
+		}
+		100% {
+			transform: translate(0, 0);
+		}
+	}
+
+	@keyframes scan {
+		0% {
+			transform: translateY(-22vh);
+		}
+		100% {
+			transform: translateY(122vh);
+		}
+	}
+
+	@keyframes flick {
+		0%,
+		100% {
+			opacity: 0.04;
+		}
+		48% {
+			opacity: 0.05;
+		}
+		50% {
+			opacity: 0.1;
+		}
+		52% {
+			opacity: 0.04;
+		}
+		88% {
+			opacity: 0.02;
+		}
+	}
+
+	#terminal-page {
+		min-height: 100vh;
+		background: var(--bg);
+		color: var(--ink);
+		font-family: 'TerminessNF', ui-monospace, monospace;
+		font-size: 15px;
+		line-height: 1.6;
+		position: relative;
+		overflow-x: hidden;
+		text-shadow: 0 0 2px var(--glow);
+		animation: flicker 11s linear infinite;
+	}
+
+	/* decorative wires */
+	.wire {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	.wire-left {
+		left: 34px;
+		background: linear-gradient(var(--accent), transparent 60%);
+		opacity: 0.18;
+	}
+
+	.wire-right {
+		right: 46px;
+		background: linear-gradient(transparent 30%, var(--hot));
+		opacity: 0.14;
+	}
+
+	.crt-scanlines {
+		pointer-events: none;
+		position: fixed;
+		inset: 0;
+		z-index: 40;
+		background: repeating-linear-gradient(
+			180deg,
+			rgba(0, 0, 0, 0) 0,
+			rgba(0, 0, 0, 0) 2px,
+			rgba(0, 0, 0, 0.28) 3px,
+			rgba(0, 0, 0, 0) 4px
+		);
+		mix-blend-mode: multiply;
+		opacity: 0.6;
+	}
+
+	.crt-vignette {
+		pointer-events: none;
+		position: fixed;
+		inset: 0;
+		z-index: 41;
+		background: radial-gradient(ellipse at center, transparent 52%, rgba(0, 0, 0, 0.6) 100%);
+	}
+
+	.crt-noise {
+		pointer-events: none;
+		position: fixed;
+		top: -30%;
+		left: -30%;
+		width: 160%;
+		height: 160%;
+		z-index: 42;
+		opacity: 0.04;
+		mix-blend-mode: screen;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+		background-size: 170px 170px;
+		animation: nz 0.55s steps(2) infinite;
+	}
+
+	.crt-scan {
+		pointer-events: none;
+		position: fixed;
+		left: 0;
+		right: 0;
+		height: 100px;
+		z-index: 43;
+		background: linear-gradient(
+			rgba(180, 200, 150, 0) 0%,
+			rgba(180, 200, 150, 0.04) 50%,
+			rgba(180, 200, 150, 0) 100%
+		);
+		animation: scan 7.5s linear infinite;
+	}
+
+	.crt-glitch {
+		pointer-events: none;
+		position: fixed;
+		inset: 0;
+		z-index: 44;
+		background: var(--bright, #ddb8f8);
+		mix-blend-mode: overlay;
+		animation: flick 6s infinite;
+	}
+
+	.page-inner {
+		max-width: 980px;
+		margin: 0 auto;
+		padding: 0 28px 90px;
+		position: relative;
+		z-index: 5;
+	}
+
+	/* Copland OS chrome bar */
+	.copland-chrome {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-bottom: 1px solid var(--border);
+		padding: 9px 2px;
+		font-family: 'VT323', monospace;
+		font-size: 18px;
+		letter-spacing: 1px;
+		color: var(--dim);
+	}
+
+	.copland-left {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.copland-dots {
+		display: inline-flex;
+		gap: 4px;
+		align-items: center;
+	}
+
+	.copland-dot {
+		width: 9px;
+		height: 9px;
+		border: 1px solid var(--dim);
+		display: inline-block;
+		flex-shrink: 0;
+	}
+
+	.copland-dot--hot {
+		background: var(--hot);
+		border-color: var(--hot);
+	}
+
+	.copland-right {
+		display: flex;
+		align-items: center;
+		gap: 18px;
+	}
+
+	.copland-hot {
+		color: var(--hot);
+	}
+
+	/* Header */
+	.term-header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		margin-top: 34px;
+	}
+
+	.term-logo {
+		text-decoration: none;
+		color: var(--bright);
+		font-family: 'VT323', monospace;
+		font-weight: 400;
+		font-size: 66px;
+		line-height: 0.86;
+		letter-spacing: 2px;
+		display: block;
+		text-shadow:
+			1px 0 var(--hot),
+			-1px 0 var(--cool);
+		cursor: default;
+	}
+
+	.term-logo:hover {
+		animation: glitchS 0.16s steps(2) infinite;
+	}
+
+	.term-subtitle {
+		margin-top: 8px;
+		font-family: 'VT323', monospace;
+		font-size: 20px;
+		color: var(--dim);
+		letter-spacing: 1px;
+		min-height: 24px;
+	}
+
+	.term-cursor-block {
+		animation: blink 1s steps(1) infinite;
+		color: var(--hot);
+	}
+
+	.term-nav {
+		display: flex;
+		align-items: center;
+		gap: 20px;
+		font-size: 14px;
+		padding-bottom: 4px;
+	}
+
+	.term-icon-btn {
+		background: none;
+		border: 1px solid var(--border);
+		color: var(--accent);
+		cursor: pointer;
+		font-family: 'TerminessNF', ui-monospace, monospace;
+		font-size: 13px;
+		letter-spacing: 1px;
+		padding: 7px 12px;
+		transition:
+			border-color 0.15s,
+			color 0.15s;
+	}
+
+	.term-icon-btn:hover {
+		border-color: var(--accent);
+		color: var(--bright);
+	}
+
+	.term-tabwindow {
+		background: var(--panel);
+		margin-top: 30px;
+	}
+
+	.term-tabbar {
+		display: flex;
+		gap: 6px;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.term-tab-wrap {
+		position: relative;
+	}
+
+	.term-tab {
+		position: relative;
+		background: none;
+		border: none;
+		color: var(--ink);
+		font-family: 'TerminessNF', ui-monospace, monospace;
+		font-size: 14px;
+		line-height: 1;
+		letter-spacing: 0.5px;
+		padding: 9px 16px 12px;
+		cursor: pointer;
+		transition: color 0.15s;
+		opacity: 0.6;
+	}
+
+	.term-tab:hover {
+		color: var(--bright);
+		opacity: 1;
+	}
+
+	.term-tab--active {
+		color: var(--bright);
+		opacity: 1;
+	}
+
+	.term-tab--active::after {
+		content: '';
+		position: absolute;
+		left: 6px;
+		right: 6px;
+		bottom: -1px;
+		height: 2px;
+		background: var(--accent);
+	}
+
+	.term-tabpanel {
+		padding: 1.4rem 1.4rem 1.6rem;
+		font-size: 0.9rem;
+		line-height: 1.85;
+	}
+
+	.term-dim {
+		color: var(--dim);
+	}
+
+	.term-hot {
+		color: var(--hot);
+	}
+
+	.term-footer {
+		margin-top: 48px;
+		padding-top: 14px;
+		border-top: 1px solid var(--border);
+		color: var(--dim);
+		font-size: 13px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 18px;
+		flex-wrap: wrap;
+	}
+
+	.tilde {
+		color: inherit;
+		position: relative;
+		top: 2px;
+	}
+</style>

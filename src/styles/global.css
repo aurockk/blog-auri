@@ -2,34 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-	--waline-theme-color: #1abc9c;
-	--waline-active-color: #16a085;
-	--waline-bg-color: #fffefb;
-	--waline-border-color: #e0e0e0;
-	--waline-box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-	--waline-avatar-radius: 50%;
-  }
-  
-  .wl-comment {
-	padding: 1rem;
-	margin-bottom: 1rem;
-  }
-  
-  .wl-like {
-	font-size: 1.2rem;
-  }
-
-.wl-form-row .wl-column-website {
-	display: none;
-  }
-  
-  .wl-form-row .wl-column {
-	width: auto;
-	flex-grow: 1;
-  }
-	
-  
 @layer base {
 	.prose code {
 		@apply text-base;

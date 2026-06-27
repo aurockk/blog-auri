@@ -1,4 +1,25 @@
 {
-	"isbn": "9788497945523",
-	"note": "¿Leo este libro? Mejor dicho, este libro me está leyendo a mí."
+	"isbn": "9789871886111",
+	"progress": "pág. 25 / 384",
+	"note": "Estoy re colgada leyendo pero promete mucho. ",
+	"finished": [
+		{
+			"date": "2026/02",
+			"title": "Cadaver Exquisito",
+			"author": "Agustina Bazterrica",
+			"stars": "★★★★★"
+		},
+		{
+			"date": "2026/02",
+			"title": "El Lector",
+			"author": "Bernhard Schlink",
+			"stars": "★★★★☆"
+		},
+		{
+			"date": "2026/04",
+			"title": "Crimen y Castigo",
+			"author": "Fiódor Dostoyevski",
+			"stars": "★★★☆☆"
+		}
+	]
 }

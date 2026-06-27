@@ -10,10 +10,10 @@ interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-	site: 'https://popurri-de-cositas.vercel.app/',
+	site: 'https://popurridecositas.blog/',
 	author: 'Auristela Diaz Luna',
-	title: 'Popurri de Cositas',
-	description: 'Blog about everything and/or everyone',
+	title: 'AuriOS',
+	description: '',
 	lang: 'es-AR',
 	ogLocale: 'es-AR',
 	shareMessage: 'Share this post',

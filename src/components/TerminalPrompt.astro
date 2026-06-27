@@ -1,0 +1,56 @@
+---
+type Props = {
+	user?: string
+	host?: string
+}
+
+const { user = 'auri', host = 'AuriOS' } = Astro.props
+---
+
+<div class='tp-cursor'>
+	<span class='tp-user'>{user}@{host}</span>
+	<span class='tp-dim'> <span class='tp-tilde'>~</span> $</span>
+	<span class='tp-blink'></span>
+</div>
+
+<style>
+	.tp-cursor {
+		margin-top: 18px;
+		font-size: 12.5px;
+		line-height: 1;
+	}
+
+	.tp-user {
+		color: var(--accent);
+	}
+
+	.tp-dim {
+		color: var(--dim);
+	}
+
+	.tp-tilde {
+		color: inherit;
+		position: relative;
+		top: 2px;
+	}
+
+	.tp-blink {
+		display: inline-block;
+		width: 8px;
+		height: 15px;
+		background: var(--ink);
+		animation: tp-blink 1.1s step-end infinite;
+		vertical-align: text-bottom;
+	}
+
+	@keyframes tp-blink {
+		0%,
+		49% {
+			opacity: 1;
+		}
+		50%,
+		100% {
+			opacity: 0;
+		}
+	}
+</style>

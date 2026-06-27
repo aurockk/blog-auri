@@ -1,0 +1,303 @@
+---
+type Props = {
+	src: string
+	title?: string
+	artist?: string
+}
+
+const { src, title = 'duvet', artist = 'bôa' } = Astro.props
+---
+
+<div class='lp' id='lain-player'>
+	<audio id='lp-audio' src={src} preload='none'></audio>
+
+	<span class='lp-cmd'>
+		<span class='lp-user'>auri@AuriOS</span><span class='lp-dim'>
+			<span class='lp-tilde'>~</span> $ mp3</span
+		>
+	</span>
+
+	<button class='lp-toggle' id='lp-toggle' aria-label='reproducir/pausar'>[▶]</button>
+
+	<span class='lp-meta'>
+		<span class='lp-title'>{title}</span>
+		<span class='lp-dim'> —</span>
+		<span class='lp-artist'>{artist}</span>
+	</span>
+
+	<div
+		class='lp-track'
+		id='lp-track'
+		role='progressbar'
+		aria-valuemin={0}
+		aria-valuemax={100}
+		aria-valuenow={0}
+	>
+		<div class='lp-fill' id='lp-fill'></div>
+	</div>
+
+	<span class='lp-time' id='lp-time'>00:00</span>
+
+	<div class='lp-vol'>
+		<button class='lp-mute' id='lp-mute' aria-label='mute'>
+			<svg
+				id='lp-vol-icon'
+				xmlns='http://www.w3.org/2000/svg'
+				viewBox='0 0 24 24'
+				fill='none'
+				stroke='currentColor'
+				stroke-width='2'
+				stroke-linecap='round'
+				stroke-linejoin='round'
+			>
+				<polygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'></polygon>
+				<path id='lp-wave1' d='M15.54 8.46a5 5 0 0 1 0 7.07'></path>
+				<path id='lp-wave2' d='M19.07 4.93a10 10 0 0 1 0 14.14'></path>
+			</svg>
+		</button>
+		<div
+			class='lp-vol-track'
+			id='lp-vol-track'
+			role='slider'
+			aria-label='volumen'
+			aria-valuemin={0}
+			aria-valuemax={100}
+			aria-valuenow={80}
+		>
+			<div class='lp-vol-fill' id='lp-vol-fill' style='width:80%'></div>
+		</div>
+	</div>
+</div>
+
+<script>
+	const audio = document.getElementById('lp-audio') as HTMLAudioElement | null
+	const toggle = document.getElementById('lp-toggle')
+	const fill = document.getElementById('lp-fill')
+	const track = document.getElementById('lp-track')
+	const timeEl = document.getElementById('lp-time')
+
+	if (!audio || !toggle || !fill || !track || !timeEl) throw new Error()
+
+	const fmt = (s: number) => {
+		const m = Math.floor(s / 60)
+		const sec = Math.floor(s % 60)
+		return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`
+	}
+
+	toggle.addEventListener('click', () => {
+		if (audio.paused) {
+			audio.play()
+		} else {
+			audio.pause()
+		}
+	})
+
+	audio.addEventListener('play', () => {
+		toggle.textContent = '[■]'
+	})
+
+	audio.addEventListener('pause', () => {
+		toggle.textContent = '[▶]'
+	})
+
+	audio.addEventListener('ended', () => {
+		toggle.textContent = '[▶]'
+		fill.style.width = '0%'
+		timeEl.textContent = '00:00'
+	})
+
+	audio.addEventListener('timeupdate', () => {
+		if (!audio.duration) return
+		const pct = (audio.currentTime / audio.duration) * 100
+		fill.style.width = `${pct}%`
+		track.setAttribute('aria-valuenow', String(Math.round(pct)))
+		timeEl.textContent = fmt(audio.currentTime)
+	})
+
+	track.addEventListener('click', (e) => {
+		const rect = track.getBoundingClientRect()
+		const pct = (e.clientX - rect.left) / rect.width
+		audio.currentTime = pct * audio.duration
+	})
+
+	const volTrack = document.getElementById('lp-vol-track')
+	const volFill = document.getElementById('lp-vol-fill')
+	const muteBtn = document.getElementById('lp-mute')
+	const wave1 = document.getElementById('lp-wave1')
+	const wave2 = document.getElementById('lp-wave2')
+
+	if (volTrack && volFill && muteBtn && wave1 && wave2) {
+		let lastVolume = 0.8
+		audio.volume = lastVolume
+
+		const updateIcon = (v: number) => {
+			const muted = v === 0
+			wave1.style.display = muted ? 'none' : ''
+			wave2.style.display = muted ? 'none' : ''
+			muteBtn.setAttribute('aria-label', muted ? 'activar sonido' : 'mutear')
+		}
+
+		const setVolume = (pct: number) => {
+			const v = Math.max(0, Math.min(1, pct))
+			audio.volume = v
+			if (v > 0) lastVolume = v
+			volFill.style.width = `${v * 100}%`
+			volTrack.setAttribute('aria-valuenow', String(Math.round(v * 100)))
+			updateIcon(v)
+		}
+
+		updateIcon(lastVolume)
+
+		muteBtn.addEventListener('click', () => {
+			setVolume(audio.volume > 0 ? 0 : lastVolume)
+		})
+
+		volTrack.addEventListener('click', (e) => {
+			const rect = volTrack.getBoundingClientRect()
+			setVolume((e.clientX - rect.left) / rect.width)
+		})
+
+		let dragging = false
+		volTrack.addEventListener('mousedown', () => {
+			dragging = true
+		})
+		window.addEventListener('mousemove', (e) => {
+			if (!dragging) return
+			const rect = volTrack.getBoundingClientRect()
+			setVolume((e.clientX - rect.left) / rect.width)
+		})
+		window.addEventListener('mouseup', () => {
+			dragging = false
+		})
+	}
+</script>
+
+<style>
+	.lp {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 14px 16px;
+		margin-top: 30px;
+		font-size: 12.5px;
+		background: var(--panel);
+		border: 1px solid var(--border);
+		flex-wrap: wrap;
+	}
+
+	.lp-user {
+		color: var(--accent);
+	}
+
+	.lp-dim {
+		color: var(--dim);
+	}
+
+	.lp-tilde {
+		color: inherit;
+		position: relative;
+		top: 2px;
+	}
+
+	.lp-toggle {
+		background: none;
+		border: none;
+		color: var(--accent);
+		font-family: inherit;
+		font-size: 13px;
+		line-height: 1;
+		cursor: pointer;
+		padding: 0;
+		transition: color 0.15s;
+		flex-shrink: 0;
+	}
+
+	.lp-toggle:hover {
+		color: var(--ink);
+	}
+
+	.lp-title {
+		color: var(--ink);
+	}
+
+	.lp-artist {
+		color: var(--amber);
+	}
+
+	.lp-track {
+		flex: 1;
+		min-width: 80px;
+		height: 3px;
+		background: var(--border);
+		position: relative;
+		cursor: pointer;
+		border-radius: 2px;
+	}
+
+	.lp-track:hover .lp-fill {
+		background: var(--ink);
+	}
+
+	.lp-fill {
+		height: 100%;
+		width: 0%;
+		background: var(--accent);
+		border-radius: 2px;
+		transition: width 0.25s linear;
+	}
+
+	.lp-time {
+		color: var(--dim);
+		font-size: 12px;
+		flex-shrink: 0;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lp-vol {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		flex-shrink: 0;
+	}
+
+	.lp-mute {
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		color: var(--dim);
+		display: flex;
+		align-items: center;
+		transition: color 0.15s;
+		flex-shrink: 0;
+	}
+
+	.lp-mute:hover {
+		color: var(--accent);
+	}
+
+	.lp-mute svg {
+		width: 13px;
+		height: 13px;
+	}
+
+	.lp-vol-track {
+		width: 56px;
+		height: 3px;
+		background: var(--border);
+		position: relative;
+		cursor: pointer;
+		border-radius: 2px;
+	}
+
+	.lp-vol-track:hover .lp-vol-fill {
+		background: var(--ink);
+	}
+
+	.lp-vol-fill {
+		height: 100%;
+		background: var(--hot, var(--accent));
+		border-radius: 2px;
+		pointer-events: none;
+	}
+</style>
