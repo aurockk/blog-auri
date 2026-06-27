@@ -300,4 +300,44 @@ const { src, title = 'duvet', artist = 'bôa' } = Astro.props
 		border-radius: 2px;
 		pointer-events: none;
 	}
+
+	/* ── Mobile ─────────────────────────────────────────── */
+	@media (max-width: 600px) {
+		.lp {
+			padding: 10px 12px;
+			gap: 8px 10px;
+		}
+
+		/* Track breaks onto its own row and fills width minus time */
+		.lp-track {
+			flex: 0 0 calc(100% - 60px);
+			height: 5px;
+			order: 10;
+		}
+
+		.lp-time {
+			order: 11;
+		}
+
+		/* Volume below on its own row */
+		.lp-vol {
+			order: 12;
+			flex: 0 0 100%;
+		}
+
+		.lp-vol-track {
+			flex: 1;
+			width: auto;
+			height: 5px;
+		}
+
+		/* Meta truncates to avoid overflow */
+		.lp-meta {
+			flex: 1;
+			min-width: 0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
 </style>

@@ -700,4 +700,75 @@ const thoughts = await getThoughts()
 		position: relative;
 		top: 2px;
 	}
+
+	/* ── Mobile ─────────────────────────────────────────── */
+	@media (max-width: 600px) {
+		.page-inner {
+			padding: 0 14px 56px;
+		}
+
+		/* Copland bar: hide less important right-side chips */
+		.copland-chrome {
+			font-size: 14px;
+			letter-spacing: 0;
+			gap: 6px;
+		}
+
+		.copland-right {
+			gap: 8px;
+		}
+
+		/* Hide "LAYER:01" on small screens */
+		.copland-right span:last-child {
+			display: none;
+		}
+
+		/* Smaller logo */
+		.term-logo {
+			font-size: 44px;
+		}
+
+		.term-subtitle {
+			font-size: 16px;
+		}
+
+		/* Stack header vertically */
+		.term-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 10px;
+			margin-top: 22px;
+		}
+
+		.term-nav {
+			width: 100%;
+		}
+
+		/* Bigger tab tap targets */
+		.term-tab {
+			padding: 10px 12px 13px;
+			font-size: 13.5px;
+		}
+
+		.term-tabpanel {
+			padding: 1rem 0.9rem 1.2rem;
+		}
+
+		/* Footer stacks */
+		.term-footer {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 6px;
+			font-size: 12px;
+		}
+
+		/* Wires closer to edge so they don't cut into content */
+		.wire-left {
+			left: 6px;
+		}
+
+		.wire-right {
+			right: 10px;
+		}
+	}
 </style>

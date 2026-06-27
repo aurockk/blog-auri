@@ -254,6 +254,25 @@ const rendered = await Promise.all(
 		font-size: 13px;
 		color: var(--ink);
 	}
+
+	/* ── Mobile ─────────────────────────────────────────── */
+	@media (max-width: 600px) {
+		.feed-image,
+		.feed-video {
+			max-height: 280px;
+			width: 100%;
+		}
+
+		.feed-link-card {
+			padding: 0.5rem 0.7rem;
+		}
+
+		.rxn-btn {
+			font-size: 16px;
+			padding: 4px;
+			opacity: 0.45;
+		}
+	}
 </style>
 
 <script>
