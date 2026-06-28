@@ -17,7 +17,6 @@ import ToggleTheme from './ToggleTheme.astro'
 			class='flex h-full flex-col justify-between gap-2 text-left md:flex-row md:items-center md:justify-between md:w-full md:gap-4'
 		>
 			<div class='flex flex-col gap-2 md:flex-row md:items-center md:gap-4 h-12'>
-				<HeaderLink href='/blog' class='flex items-center gap-1 md:text-base'>Blog</HeaderLink>
 				<HeaderLink href='/tags' class='flex items-center gap-1 md:text-base'>
 					<TagIcon /> Tags
 				</HeaderLink>
@@ -58,7 +57,13 @@ import ToggleTheme from './ToggleTheme.astro'
 	})
 </script>
 <style>
-	@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+	@font-face {
+		font-family: 'Dancing Script';
+		src: url('/fonts/DancingScript-700-latin.woff2') format('woff2');
+		font-weight: 700;
+		font-style: normal;
+		font-display: swap;
+	}
 	.title {
 		font-family: 'Dancing Script', cursive;
 		font-size: 2rem;

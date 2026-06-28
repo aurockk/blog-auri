@@ -5,7 +5,10 @@ let client: MongoClient | null = null
 
 async function getDb() {
 	if (!client) {
-		client = new MongoClient(process.env.MONGODB_URI!)
+		client = new MongoClient(process.env.MONGODB_URI!, {
+			maxPoolSize: 5,
+			serverSelectionTimeoutMS: 5000
+		})
 		await client.connect()
 	}
 	return client.db('blog')

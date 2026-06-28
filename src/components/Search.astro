@@ -1,7 +1,6 @@
 ---
 // Inspired by -> https://github.com/chrismwilliams/astro-theme-cactus/blob/main/src/components/Search.astro
 
-import '@pagefind/default-ui/css/ui.css'
 import SearchIcon from '@/components/icons/SearchIcon'
 ---
 
@@ -103,20 +102,25 @@ import SearchIcon from '@/components/icons/SearchIcon'
 				}
 			})
 
-			window.addEventListener('DOMContentLoaded', () => {
-				if (import.meta.env.DEV) return
-				const onIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1))
-				onIdle(async () => {
-					// @ts-ignore
-					const { PagefindUI } = await import('@pagefind/default-ui')
-					new PagefindUI({
-						element: '#pagefind__search',
-						baseUrl: import.meta.env.BASE_URL,
-						bundlePath: import.meta.env.BASE_URL.replace(/\/$/, '') + '/pagefind/',
-						showImages: false
-					})
+			let pagefindLoaded = false
+			const loadPagefind = async () => {
+				if (pagefindLoaded || import.meta.env.DEV) return
+				pagefindLoaded = true
+				const link = document.createElement('link')
+				link.rel = 'stylesheet'
+				link.href = '/pagefind/pagefind-ui.css'
+				document.head.appendChild(link)
+				// @ts-ignore
+				const { PagefindUI } = await import('@pagefind/default-ui')
+				new PagefindUI({
+					element: '#pagefind__search',
+					baseUrl: import.meta.env.BASE_URL,
+					bundlePath: import.meta.env.BASE_URL.replace(/\/$/, '') + '/pagefind/',
+					showImages: false
 				})
-			})
+			}
+
+			openBtn.addEventListener('click', loadPagefind, { once: true })
 		}
 	}
 
