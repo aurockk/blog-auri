@@ -2,22 +2,7 @@
 import TerminalPrompt from './TerminalPrompt.astro'
 import lectura from '../data/recentlybook.json'
 
-const { isbn, progress, note, finished } = lectura
-
-let title = ''
-let author = ''
-
-const bibkey = isbn.startsWith('OL') ? `OLID:${isbn}` : `ISBN:${isbn}`
-
-try {
-	const res = await fetch(
-		`https://openlibrary.org/api/books?bibkeys=${bibkey}&format=json&jscmd=data`
-	)
-	const data = await res.json()
-	const book = data[bibkey]
-	title = book?.title ?? ''
-	author = book?.authors?.[0]?.name ?? ''
-} catch {}
+const { title, author, progress, note, finished } = lectura
 ---
 
 <div class='rp-body'>
@@ -25,20 +10,12 @@ try {
 	<div class='rp-current'>
 		<div class='rp-bar'></div>
 		<div class='rp-current-info'>
-			{
-				title ? (
-					<>
-						<div class='rp-title'>{title}</div>
-						<div class='rp-meta'>
-							<span class='rp-dim'>por</span>
-							<span class='rp-amber'> {author}</span>
-							<span class='rp-dim'> · {progress}</span>
-						</div>
-					</>
-				) : (
-					<div class='rp-dim'>ISBN: {isbn}</div>
-				)
-			}
+			<div class='rp-title'>{title}</div>
+			<div class='rp-meta'>
+				<span class='rp-dim'>por</span>
+				<span class='rp-amber'> {author}</span>
+				<span class='rp-dim'> · {progress}</span>
+			</div>
 			<p class='rp-note'>"{note}"</p>
 		</div>
 	</div>

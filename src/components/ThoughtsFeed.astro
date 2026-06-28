@@ -33,6 +33,7 @@ const getHostname = (url: string) => {
 }
 
 const REACTIONS = ['❤️'] as const
+const PAGE_SIZE = 5
 
 const rendered = await Promise.all(
 	thoughts.map(async (thought) => {
@@ -46,8 +47,8 @@ const rendered = await Promise.all(
 
 <ul class='feed-list'>
 	{
-		rendered.map(({ id, data, Content, ytId, linkHost }) => (
-			<li class='feed-entry'>
+		rendered.map(({ id, data, Content, ytId, linkHost }, i) => (
+			<li class='feed-entry' data-index={i} style={i >= PAGE_SIZE ? 'display:none' : ''}>
 				<span class='feed-timestamp'>[{formatTimestamp(data.pubDate)}]</span>
 				<div class='feed-content'>
 					<Content />
@@ -58,7 +59,13 @@ const rendered = await Promise.all(
 					)}
 					{data.localVideo && (
 						<div class='feed-media'>
-							<video src={data.localVideo} controls class='feed-video' preload='metadata' />
+							<video
+								src={encodeURI(data.localVideo)}
+								controls
+								class='feed-video'
+								preload='metadata'
+								type='video/mp4'
+							/>
 						</div>
 					)}
 					{data.video &&
@@ -75,7 +82,7 @@ const rendered = await Promise.all(
 							</div>
 						) : (
 							<div class='feed-media'>
-								<video src={data.video} controls class='feed-video' />
+								<video src={data.video} controls class='feed-video' preload='none' />
 							</div>
 						))}
 					{data.link && (
@@ -103,6 +110,14 @@ const rendered = await Promise.all(
 		))
 	}
 </ul>
+
+{
+	rendered.length > PAGE_SIZE && (
+		<button id='feed-more-btn' class='feed-more'>
+			<span class='feed-more-arrow'>↓</span> ver más ({rendered.length - PAGE_SIZE} anteriores)
+		</button>
+	)
+}
 
 <TerminalPrompt />
 
@@ -255,6 +270,31 @@ const rendered = await Promise.all(
 		color: var(--ink);
 	}
 
+	.feed-more {
+		display: block;
+		margin-top: 1.2rem;
+		background: none;
+		border: 1px solid var(--border);
+		color: var(--dim);
+		font-family: 'TerminessNF', ui-monospace, monospace;
+		font-size: 13px;
+		letter-spacing: 0.5px;
+		padding: 8px 14px;
+		cursor: pointer;
+		transition:
+			border-color 0.15s,
+			color 0.15s;
+	}
+
+	.feed-more:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+
+	.feed-more-arrow {
+		color: var(--accent);
+	}
+
 	/* ── Mobile ─────────────────────────────────────────── */
 	@media (max-width: 600px) {
 		.feed-image,
@@ -330,4 +370,15 @@ const rendered = await Promise.all(
 				.catch(() => {})
 		})
 	})
+
+	// "ver más" pagination
+	const moreBtn = document.getElementById('feed-more-btn')
+	if (moreBtn) {
+		moreBtn.addEventListener('click', () => {
+			document.querySelectorAll<HTMLElement>('.feed-entry[data-index]').forEach((el) => {
+				el.style.display = ''
+			})
+			moreBtn.remove()
+		})
+	}
 </script>

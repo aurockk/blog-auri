@@ -1,0 +1,141 @@
+---
+import TerminalLayout from '@/layouts/TerminalLayout'
+---
+
+<TerminalLayout title='404 — No encontrado'>
+	<style is:global>
+		:root {
+			--bg: #060009;
+			--panel: #0d0012;
+			--ink: #c8a0e8;
+			--dim: #5a2878;
+			--accent: #bb55ee;
+			--amber: #e07acc;
+			--border: #2a0840;
+			--glow: rgba(160, 80, 220, 0.28);
+			--bright: #ddb8f8;
+			--hot: #d640a0;
+			--cool: #8898cc;
+		}
+	</style>
+	<style>
+		@font-face {
+			font-family: 'TerminessNF';
+			src: url('/fonts/TerminessNerdFont-Regular.woff2') format('woff2');
+			font-weight: 400;
+			font-style: normal;
+			font-display: swap;
+		}
+		@font-face {
+			font-family: 'VT323';
+			src: url('/fonts/VT323-latin.woff2') format('woff2');
+			font-weight: 400;
+			font-style: normal;
+			font-display: swap;
+		}
+
+		.err-page {
+			min-height: 100vh;
+			background: var(--bg);
+			color: var(--ink);
+			font-family: 'TerminessNF', ui-monospace, monospace;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 2rem;
+		}
+
+		.err-inner {
+			max-width: 540px;
+			width: 100%;
+		}
+
+		.err-code {
+			font-family: 'VT323', monospace;
+			font-size: 120px;
+			line-height: 1;
+			color: var(--bright);
+			text-shadow:
+				2px 0 var(--hot),
+				-2px 0 var(--cool);
+			margin: 0;
+		}
+
+		.err-label {
+			color: var(--accent);
+			font-size: 13px;
+			letter-spacing: 2px;
+			margin-top: 4px;
+		}
+
+		.err-msg {
+			margin-top: 24px;
+			color: var(--ink);
+			font-size: 15px;
+			line-height: 1.7;
+			border-left: 3px solid var(--accent);
+			padding-left: 14px;
+		}
+
+		.err-actions {
+			margin-top: 32px;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			font-size: 14px;
+		}
+
+		.err-actions a {
+			color: var(--accent);
+			text-decoration: none;
+			transition: color 0.15s;
+		}
+
+		.err-actions a:hover {
+			color: var(--bright);
+		}
+
+		.err-prompt {
+			margin-top: 40px;
+			color: var(--dim);
+			font-size: 12.5px;
+		}
+
+		.err-prompt span {
+			color: var(--accent);
+		}
+	</style>
+
+	<div class='err-page'>
+		<div class='err-inner'>
+			<p class='err-code'>404</p>
+			<p class='err-label'>// PAGE_NOT_FOUND</p>
+			<p class='err-msg'>
+				Esta página no existe o fue movida.<br />
+				Quizás escribiste mal la URL, o yo la rompí sin querer.
+			</p>
+			<div class='err-actions'>
+				<div><span style='color: var(--hot)'>→</span> <a href='/'>~/ inicio</a></div>
+			</div>
+			<p class='err-prompt'>
+				<span>auri@AuriOS</span> ~ $ cd /<span
+					id='blink'
+					style='background:var(--ink);width:8px;height:14px;display:inline-block;vertical-align:text-bottom;animation:blink 1s steps(1) infinite'
+				></span>
+			</p>
+		</div>
+	</div>
+
+	<style is:global>
+		@keyframes blink {
+			0%,
+			49% {
+				opacity: 1;
+			}
+			50%,
+			100% {
+				opacity: 0;
+			}
+		}
+	</style>
+</TerminalLayout>
