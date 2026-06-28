@@ -1,17 +1,5 @@
 {
 	"version": 2,
-	"redirects": [
-		{
-			"source": "/admin",
-			"destination": "https://app.tina.io",
-			"permanent": false
-		},
-		{
-			"source": "/admin/(.*)",
-			"destination": "https://app.tina.io",
-			"permanent": false
-		}
-	],
 	"headers": [
 		{
 			"source": "/api/(.*)",
